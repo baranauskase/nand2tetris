@@ -1,0 +1,63 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/DMux8Way.hdl
+
+/**
+ * 8-way demultiplexor:
+ * {a, b, c, d, e, f, g, h} = {in, 0, 0, 0, 0, 0, 0, 0} if sel == 000
+ *                            {0, in, 0, 0, 0, 0, 0, 0} if sel == 001
+ *                            etc.
+ *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
+ */
+
+CHIP DMux8Way {
+    IN in, sel[3];
+    OUT a, b, c, d, e, f, g, h;
+
+    PARTS:
+    Not(in=sel[0], out=notselzero);
+    Not(in=sel[1], out=notselone);
+    Not(in=sel[2], out=notseltwo);
+
+    // 000 - a
+    And(a=notselzero, b=notselone, out=aactiveprime);
+    And(a=aactiveprime, b=notseltwo, out=aactive);
+
+    // 001 - b
+    And(a=sel[0], b=notselone, out=bactiveprime);
+    And(a=bactiveprime, b=notseltwo, out=bactive);
+
+    // 010 - c
+    And(a=notselzero, b=sel[1], out=cactiveprime);
+    And(a=cactiveprime, b=notseltwo, out=cactive);
+
+    // 011 - d
+    And(a=sel[0], b=sel[1], out=dactiveprime);
+    And(a=dactiveprime, b=notseltwo, out=dactive);
+
+    // 100 - e
+    And(a=notselzero, b=notselone, out=eactiveprime);
+    And(a=eactiveprime, b=sel[2], out=eactive);
+
+    // 101 - f
+    And(a=sel[0], b=notselone, out=factiveprime);
+    And(a=factiveprime, b=sel[2], out=factive);
+
+    // 110 - g
+    And(a=notselzero, b=sel[1], out=gactiveprime);
+    And(a=gactiveprime, b=sel[2], out=gactive);
+
+    // 111 - h
+    And(a=sel[0], b=sel[1], out=hactiveprime);
+    And(a=hactiveprime, b=sel[2], out=hactive);
+
+    And(a=in, b=aactive, out=a);
+    And(a=in, b=bactive, out=b);
+    And(a=in, b=cactive, out=c);
+    And(a=in, b=dactive, out=d);
+    And(a=in, b=eactive, out=e);
+    And(a=in, b=factive, out=f);
+    And(a=in, b=gactive, out=g);
+    And(a=in, b=hactive, out=h);
+}

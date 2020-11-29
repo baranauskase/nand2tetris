@@ -1,0 +1,4 @@
+tools
+.vscode
+project*.zip
+.DS_Store

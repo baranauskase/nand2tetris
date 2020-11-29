@@ -1,0 +1,35 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux4Way16.hdl
+
+/**
+ * 4-way 16-bit multiplexor:
+ * out = a if sel == 00
+ *       b if sel == 01
+ *       c if sel == 10
+ *       d if sel == 11
+ */
+
+CHIP Mux4Way16 {
+    IN a[16], b[16], c[16], d[16], sel[2];
+    OUT out[16];
+
+    PARTS:
+    Not(in=sel[0], out=notselzero);
+    Not(in=sel[1], out=notselone);
+
+    And(a=notselzero, b=notselone, out=aactive);
+    And(a=sel[0], b=notselone, out=bactive);
+    And(a=notselzero, b=sel[1], out=cactive);
+    And(a=sel[0], b=sel[1], out=dactive);
+
+    And16(a[0..15]=a, b[0]=aactive, b[1]=aactive, b[2]=aactive, b[3]=aactive, b[4]=aactive, b[5]=aactive, b[6]=aactive, b[7]=aactive, b[8]=aactive, b[9]=aactive, b[10]=aactive, b[11]=aactive, b[12]=aactive, b[13]=aactive, b[14]=aactive, b[15]=aactive, out[0..15]=outa);
+    And16(a[0..15]=b, b[0]=bactive, b[1]=bactive, b[2]=bactive, b[3]=bactive, b[4]=bactive, b[5]=bactive, b[6]=bactive, b[7]=bactive, b[8]=bactive, b[9]=bactive, b[10]=bactive, b[11]=bactive, b[12]=bactive, b[13]=bactive, b[14]=bactive, b[15]=bactive, out[0..15]=outb);
+    And16(a[0..15]=c, b[0]=cactive, b[1]=cactive, b[2]=cactive, b[3]=cactive, b[4]=cactive, b[5]=cactive, b[6]=cactive, b[7]=cactive, b[8]=cactive, b[9]=cactive, b[10]=cactive, b[11]=cactive, b[12]=cactive, b[13]=cactive, b[14]=cactive, b[15]=cactive, out[0..15]=outc);
+    And16(a[0..15]=d, b[0]=dactive, b[1]=dactive, b[2]=dactive, b[3]=dactive, b[4]=dactive, b[5]=dactive, b[6]=dactive, b[7]=dactive, b[8]=dactive, b[9]=dactive, b[10]=dactive, b[11]=dactive, b[12]=dactive, b[13]=dactive, b[14]=dactive, b[15]=dactive, out[0..15]=outd);
+
+    Or16(a[0..15]=outa, b[0..15]=outb, out=outorone);
+    Or16(a[0..15]=outc, b[0..15]=outd, out=outortwo);
+    Or16(a[0..15]=outorone, b[0..15]=outortwo, out=out);
+}

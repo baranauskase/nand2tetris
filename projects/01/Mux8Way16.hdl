@@ -1,0 +1,75 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux8Way16.hdl
+
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel == 000
+ *       b if sel == 001
+ *       etc.
+ *       h if sel == 111
+ */
+
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+    Not(in=sel[0], out=notselzero);
+    Not(in=sel[1], out=notselone);
+    Not(in=sel[2], out=notseltwo);
+
+    // 000 - a
+    And(a=notselzero, b=notselone, out=aactiveprime);
+    And(a=aactiveprime, b=notseltwo, out=aactive);
+
+    // 001 - b
+    And(a=sel[0], b=notselone, out=bactiveprime);
+    And(a=bactiveprime, b=notseltwo, out=bactive);
+
+    // 010 - c
+    And(a=notselzero, b=sel[1], out=cactiveprime);
+    And(a=cactiveprime, b=notseltwo, out=cactive);
+
+    // 011 - d
+    And(a=sel[0], b=sel[1], out=dactiveprime);
+    And(a=dactiveprime, b=notseltwo, out=dactive);
+
+    // 100 - e
+    And(a=notselzero, b=notselone, out=eactiveprime);
+    And(a=eactiveprime, b=sel[2], out=eactive);
+
+    // 101 - f
+    And(a=sel[0], b=notselone, out=factiveprime);
+    And(a=factiveprime, b=sel[2], out=factive);
+
+    // 110 - g
+    And(a=notselzero, b=sel[1], out=gactiveprime);
+    And(a=gactiveprime, b=sel[2], out=gactive);
+
+    // 111 - h
+    And(a=sel[0], b=sel[1], out=hactiveprime);
+    And(a=hactiveprime, b=sel[2], out=hactive);
+
+    And16(a[0..15]=a, b[0]=aactive, b[1]=aactive, b[2]=aactive, b[3]=aactive, b[4]=aactive, b[5]=aactive, b[6]=aactive, b[7]=aactive, b[8]=aactive, b[9]=aactive, b[10]=aactive, b[11]=aactive, b[12]=aactive, b[13]=aactive, b[14]=aactive, b[15]=aactive, out[0..15]=outa);
+    And16(a[0..15]=b, b[0]=bactive, b[1]=bactive, b[2]=bactive, b[3]=bactive, b[4]=bactive, b[5]=bactive, b[6]=bactive, b[7]=bactive, b[8]=bactive, b[9]=bactive, b[10]=bactive, b[11]=bactive, b[12]=bactive, b[13]=bactive, b[14]=bactive, b[15]=bactive, out[0..15]=outb);
+    And16(a[0..15]=c, b[0]=cactive, b[1]=cactive, b[2]=cactive, b[3]=cactive, b[4]=cactive, b[5]=cactive, b[6]=cactive, b[7]=cactive, b[8]=cactive, b[9]=cactive, b[10]=cactive, b[11]=cactive, b[12]=cactive, b[13]=cactive, b[14]=cactive, b[15]=cactive, out[0..15]=outc);
+    And16(a[0..15]=d, b[0]=dactive, b[1]=dactive, b[2]=dactive, b[3]=dactive, b[4]=dactive, b[5]=dactive, b[6]=dactive, b[7]=dactive, b[8]=dactive, b[9]=dactive, b[10]=dactive, b[11]=dactive, b[12]=dactive, b[13]=dactive, b[14]=dactive, b[15]=dactive, out[0..15]=outd);
+    And16(a[0..15]=e, b[0]=eactive, b[1]=eactive, b[2]=eactive, b[3]=eactive, b[4]=eactive, b[5]=eactive, b[6]=eactive, b[7]=eactive, b[8]=eactive, b[9]=eactive, b[10]=eactive, b[11]=eactive, b[12]=eactive, b[13]=eactive, b[14]=eactive, b[15]=eactive, out[0..15]=oute);
+    And16(a[0..15]=f, b[0]=factive, b[1]=factive, b[2]=factive, b[3]=factive, b[4]=factive, b[5]=factive, b[6]=factive, b[7]=factive, b[8]=factive, b[9]=factive, b[10]=factive, b[11]=factive, b[12]=factive, b[13]=factive, b[14]=factive, b[15]=factive, out[0..15]=outf);
+    And16(a[0..15]=g, b[0]=gactive, b[1]=gactive, b[2]=gactive, b[3]=gactive, b[4]=gactive, b[5]=gactive, b[6]=gactive, b[7]=gactive, b[8]=gactive, b[9]=gactive, b[10]=gactive, b[11]=gactive, b[12]=gactive, b[13]=gactive, b[14]=gactive, b[15]=gactive, out[0..15]=outg);
+    And16(a[0..15]=h, b[0]=hactive, b[1]=hactive, b[2]=hactive, b[3]=hactive, b[4]=hactive, b[5]=hactive, b[6]=hactive, b[7]=hactive, b[8]=hactive, b[9]=hactive, b[10]=hactive, b[11]=hactive, b[12]=hactive, b[13]=hactive, b[14]=hactive, b[15]=hactive, out[0..15]=outh);
+
+    Or16(a[0..15]=outa, b[0..15]=outb, out=outorone);
+    Or16(a[0..15]=outc, b[0..15]=outd, out=outortwo);
+    Or16(a[0..15]=oute, b[0..15]=outf, out=outorthree);
+    Or16(a[0..15]=outg, b[0..15]=outh, out=outorfour);
+
+    Or16(a[0..15]=outorone, b[0..15]=outortwo, out=outorfive);
+    Or16(a[0..15]=outorthree, b[0..15]=outorfour, out=outorsix);    
+
+    Or16(a[0..15]=outorfive, b[0..15]=outorsix, out=out);    
+}
