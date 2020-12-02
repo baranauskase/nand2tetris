@@ -27,26 +27,24 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
     And(a=address[13], b=address[14], out=isKBDAdr);
     Not(in=isKBDAdr, out=isNotKBDAdr);
 
     And(a=isNotKBDAdr, b=address[14], out=isScreenAdr);
-    And(a=isScreenAdr, b=address[12], out=isScreenAdr2);
-    Not(in=isScreenAdr2, out=isNotScreenAdr2);
-    And(a=isScreenAdr, b=isNotScreenAdr2, out=isScreenAdr1);
+    And(a=isScreenAdr, b=address[12], out=isScreenLower);
+    Not(in=isScreenLower, out=isNotScreenLower);
+    And(a=isScreenAdr, b=isNotScreenLower, out=isScreenUpper);
 
-    Or(a=isScreenAdr2, b=isKBDAdr, out=isSel0);
-    Or(a=isScreenAdr1, b=isKBDAdr, out=isSel1);
-
+    Or(a=isScreenUpper, b=isKBDAdr, out=isSel0);
+    Or(a=isScreenLower, b=isKBDAdr, out=isSel1);
 
     DMux4Way(in=load, sel[0]=isSel0, sel[1]=isSel1, a=loadData, b=loadScreen1, c=loadScreen2, d=loadKBD);
-
+    
+    Or(a=loadScreen1, b=loadScreen2, out=loadScreen);
     RAM16K(in=in, load=loadData, address=address[0..13], out=outData);
-    RAM4K(in=in, load=loadScreen1, address=address[0..11], out=outScreen1);
-    RAM4K(in=in, load=loadScreen2, address=address[0..11], out=outScreen2);
+    Screen(in=in, load=loadScreen, address=address[0..12], out=outScreen);
     Keyboard(out=outKBD);
 
-    Mux4Way16(a=outData, b=outScreen1, c=outScreen2, d=outKBD, sel[0]=isSel0, sel[1]=isSel1, out=out);
+    Mux4Way16(a=outData, b=outScreen, c=outScreen, d=outKBD, sel[0]=isSel0, sel[1]=isSel1, out=out);
 
 }
